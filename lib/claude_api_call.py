@@ -21,7 +21,7 @@ def make_claude_request(human_input: str) -> str:
     data = {
         "model": "claude-2",
         "prompt": f"\n\nHuman: {human_input.strip()}\n\nAssistant:",
-        "max_tokens_to_sample": 3000,
+        "max_tokens_to_sample": 15,
         "temperature": 0.0,
     }
     response = None

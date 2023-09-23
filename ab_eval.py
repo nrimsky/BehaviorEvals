@@ -2,10 +2,11 @@
 Script to evaluate a set of answers to questions by whether they are closer to 2 options presented by A and B.
 """
 
-from claude_api_call import make_claude_request
+from lib.claude_api_call import make_claude_request
 from typing import List, Tuple
 from random import random
 import json
+from tqdm import tqdm
 
 def make_prompt(question_answer_and_option: List[Tuple[Tuple[str, str], Tuple[str, str]]]) -> str:
     qa, ab = question_answer_and_option
@@ -16,7 +17,7 @@ def make_prompt(question_answer_and_option: List[Tuple[Tuple[str, str], Tuple[st
     if swap_order:
         a_option, b_option = b_option, a_option
     return f"""Your task to choose which option a particular answer to a question is closer to.
-Please do not return any text other than 'A', 'B' or 'neither'. Only use 'neither' if the answer is very far from either option.
+Please do not return any text other than 'A', 'B' or 'neither'. Only use 'neither' if the answer is not close at all to either option.
 
 Here are some examples of answers to questions and the closest option:
 <example>
@@ -54,7 +55,7 @@ def evaluate(question_answers_and_options: List[Tuple[Tuple[str, str], Tuple[str
     Returns: List of scores for each question and answer pair. e.g. ["A", "B", "neither"]
     """
     scores = []
-    for question_answer_and_option in question_answers_and_options:
+    for question_answer_and_option in tqdm(question_answers_and_options):
         prompt, swapped = make_prompt(question_answer_and_option)
         try:
             choice = make_claude_request(prompt).upper()
